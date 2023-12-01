@@ -19,17 +19,11 @@ const HomePage = () => {
     nextPage: 2,
   });
 
-  // const [selectPage, setSelectPage] = useState(1);
-
-  // const changePage = (paging) => {
-  //   setSelectPage(paging);
-  //   handleGetMenus();
-  // };
-
-  const handleGetMenus = (selectedPage) => {
+  const handleGetMenus = (selectedPage = "", dataName = "", dataType = "") => {
+    console.log("selectedpage: ", selectedPage);
     axios
       .get(
-        `https://api.mudoapi.tech/menus?perPage=5&page=${selectedPage}` //&name=${menuName}&type=${menuType}`
+        `https://api.mudoapi.tech/menus?perPage=5&page=${selectedPage}&name=${dataName}&type=${dataType}`
       )
       .then((res) => {
         console.log(res.data.data);
@@ -47,18 +41,33 @@ const HomePage = () => {
       });
   };
 
+  const token = localStorage.getItem("token");
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+
+  const handleDeleteMenu = (idMenu) => {
+    axios
+      .delete(`https://api.mudoapi.tech/menu/${idMenu}`, config)
+      .then((res) => {
+        console.log(res.data.data);
+        handleGetMenus();
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div>
       <Navbar></Navbar>
       <button
         disabled={page.previousPage <= 0 ? true : false}
-        onClick={() => handleGetMenus(page.previousPage)}
+        onClick={() => handleGetMenus(page.previousPage, "", "")}
       >
         Prev
       </button>
       <button
         disabled={page.total <= page.currentPage * page.perPage}
-        onClick={() => handleGetMenus(page.nextPage)}
+        onClick={() => handleGetMenus(page.nextPage, "", "")}
       >
         Next
       </button>
@@ -68,9 +77,7 @@ const HomePage = () => {
           <img src={menu.imageUrl} alt="" />
           {/* <Link to={`/delete/${menu.id}`}>Detail</Link> */}
           <Link to={`/edit/${menu.id}`}>Edit Menu</Link>
-          <button onClick={console.log("handle delete menyusul")}>
-            Delete
-          </button>
+          <button onClick={() => handleDeleteMenu(menu.id)}>Delete</button>
         </div>
       ))}
     </div>
