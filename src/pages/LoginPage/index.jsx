@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Navbar from "../../components/Navbar";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
+import AuthRoute from "../../hoc/AuthRoute";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
