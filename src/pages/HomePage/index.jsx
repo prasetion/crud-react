@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
 import { Link } from "react-router-dom";
+import * as requestAPI from "../../helpers/apis";
 
 const HomePage = () => {
   useEffect(() => {
@@ -19,26 +20,44 @@ const HomePage = () => {
     nextPage: 2,
   });
 
-  const handleGetMenus = (selectedPage = "", dataName = "", dataType = "") => {
+  const handleGetMenus = async (
+    selectedPage = "",
+    dataName = "",
+    dataType = ""
+  ) => {
     console.log("selectedpage: ", selectedPage);
-    axios
-      .get(
-        `https://api.mudoapi.tech/menus?perPage=5&page=${selectedPage}&name=${dataName}&type=${dataType}`
-      )
-      .then((res) => {
-        console.log(res.data.data);
-        setPage({
-          perPage: res.data.data.perPage,
-          total: res.data.data.total,
-          currentPage: res.data.data.currentPage,
-          previousPage: res.data.data.previousPage,
-          nextPage: res.data.data.nextPage,
-        });
-        setMenus(res.data.data.Data);
-      })
-      .catch((err) => {
-        console.log(err);
+    // axios
+    //   .get(
+    //     `https://api.mudoapi.tech/menus?perPage=5&page=${selectedPage}&name=${dataName}&type=${dataType}`
+    //   )
+    //   .then((res) => {
+    //     console.log(res.data.data);
+    //     setPage({
+    //       perPage: res.data.data.perPage,
+    //       total: res.data.data.total,
+    //       currentPage: res.data.data.currentPage,
+    //       previousPage: res.data.data.previousPage,
+    //       nextPage: res.data.data.nextPage,
+    //     });
+    //     setMenus(res.data.data.Data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    try {
+      const res = await requestAPI.getMenus(selectedPage, dataName, dataType);
+      console.log(res.data.data);
+      setPage({
+        perPage: res.data.data.perPage,
+        total: res.data.data.total,
+        currentPage: res.data.data.currentPage,
+        previousPage: res.data.data.previousPage,
+        nextPage: res.data.data.nextPage,
       });
+      setMenus(res.data.data.Data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const token = localStorage.getItem("token");
